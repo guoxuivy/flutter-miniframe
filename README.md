@@ -1,6 +1,6 @@
-# cxe
+# miniframe
 
-仓小二用户端 **flutter**
+flutter APP项目的微信支撑框架 **flutter**
 
 ## Getting Started
 
