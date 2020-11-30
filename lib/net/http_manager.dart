@@ -84,7 +84,7 @@ class HttpManager {
       res = Map<String, dynamic>();
     }
     if(res!=null && res.isNotEmpty && res['code']==401){
-      trace('跳转到login');
+      trace('401信息跳转到login');
     }
     return Result(res);
   }
@@ -100,7 +100,7 @@ class HttpManager {
           data: data);
     } on DioError catch (e) {
       if(e.type != DioErrorType.CANCEL){
-        trace('统一气泡弹出提示');
+        trace('统一气泡弹出提示网络或服务器异常');
       }
     }
     return parseResponse(response);
@@ -115,7 +115,7 @@ class HttpManager {
           queryParameters: data, options: options, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (e.type != DioErrorType.CANCEL) {
-        trace('统一气泡弹出提示');
+        trace('统一气泡弹出提示网络或服务器异常');
       }
     }
     return parseResponse(response);

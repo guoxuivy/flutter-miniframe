@@ -47,7 +47,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
     context.read(themeProvider).change();
     CancelToken token = new CancelToken();
     HttpManager.instance
-        .get('/backapi/system/env',
+        .get('/backapi/system/env1',
             data: {'key': 'free', 'msg': '鹅鹅鹅'}, cancelToken: token)
         .then((result) {
 
@@ -56,8 +56,10 @@ class _DemoHomePageState extends State<DemoHomePage> {
         _counter++;
         _myres=result['host'];
       });
+      trace(result.data);
       trace("结果");
-      trace(result['host']);
+      trace(result['1']['a'].data==null);
+      trace(result['1']['a'].isNull);
     });
 
     // setState(() {

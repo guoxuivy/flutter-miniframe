@@ -29,8 +29,8 @@ class LogsInterceptors extends InterceptorsWrapper {
     trace('----------End: $duration 毫秒----------');
 
     if (response != null) {
-      // var responseStr = response.toString();
-      // trace(responseStr);
+      var responseStr = response.toString();
+      trace(responseStr);
     }
     return super.onResponse(response);
   }
