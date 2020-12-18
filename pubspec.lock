@@ -21,7 +21,7 @@ packages:
       name: cached_network_image
       url: "https://mirrors.cloud.tencent.com/dart-pub"
     source: hosted
-    version: "2.3.3"
+    version: "2.4.1"
   characters:
     dependency: transitive
     description:
@@ -191,6 +191,13 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub"
     source: hosted
     version: "0.3.0"
+  package_info:
+    dependency: "direct main"
+    description:
+      name: package_info
+      url: "https://mirrors.cloud.tencent.com/dart-pub"
+    source: hosted
+    version: "0.3.2+1"
   path:
     dependency: transitive
     description:

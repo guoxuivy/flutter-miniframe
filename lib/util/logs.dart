@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'package:cxe/boot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cxe/util/utils.dart';
 
 /// 日志集中处理
 class Logs {
+  static int _limitLength = 600;
+  static String _startLine = "=========CXE-LOG=========";
+  static String _endLine = "=========================";
+
   static void trace(dynamic value, [level = logLevel.info]) {
-    if (isDebug) {
-      print(value);
+    if (Boot.instance.config.debug) {
+      _log(value.toString());
     } else {
       // 可以写日志文件 or 远程上报服务器
       switch (level) {
@@ -24,7 +29,7 @@ class Logs {
 
   /// 拦截 系统的一些异常信息 不要调用trace
   static void collectPrint(ZoneDelegate parent, Zone zone, String line) {
-    if (isDebug) {
+    if (Boot.instance.config.debug) {
       parent.print(zone, line);
     } else {
       // 文件or网络日子处理
@@ -46,5 +51,32 @@ class Logs {
     // 构建FlutterErrorDetails错误信息
     FlutterErrorDetails err = FlutterErrorDetails(exception: e, stack: stack);
     reportErrorAndLog(err);
+  }
+
+  static void _log(String msg) {
+    print("$_startLine");
+    if (msg.length < _limitLength) {
+      print(msg);
+    } else {
+      _segmentationLog(msg);
+    }
+    print("$_endLine");
+  }
+
+  static void _segmentationLog(String msg) {
+    var outStr = StringBuffer();
+    for (var index = 0; index < msg.length; index++) {
+      outStr.write(msg[index]);
+      if (index % _limitLength == 0 && index != 0) {
+        print(outStr);
+        outStr.clear();
+        var lastIndex = index + 1;
+        if (msg.length - lastIndex < _limitLength) {
+          var remainderStr = msg.substring(lastIndex, msg.length);
+          print(remainderStr);
+          break;
+        }
+      }
+    }
   }
 }

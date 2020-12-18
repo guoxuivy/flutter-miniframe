@@ -1,15 +1,8 @@
 import 'dart:convert';
-import 'package:cxe/util/local_storage.dart';
 import 'package:cxe/util/logs.dart';
 
-bool get isDebug {
-  bool inDebugMode = false;
-  assert(inDebugMode = true); //如果debug模式下会触发赋值
-  return inDebugMode;
-}
 
 /// 全局保存的登录token 不走ls 提高性能
-String _token;
 
 /// 枚举日志类型
 enum logLevel { info, warning, error, exception }
@@ -45,27 +38,5 @@ class Utils {
     return value;
   }
 
-  ///获取当前登录token
-  static String getToken() {
-    return _token;
-  }
 
-  /// 设置登录token 并保存缓存
-  static void setToken(String token) async {
-    _token = token;
-    LocalStorage ls = LocalStorage.instance;
-    ls.setStorage("token", token);
-    trace('设置token：' + token);
-  }
-
-  /// 工具初始化
-  static void init() async {
-    // 初始化本地token
-    LocalStorage ls = LocalStorage.instance;
-    // await ls.removeStorage('token');
-    String token = await ls.getStorage('token');
-    trace(token);
-    token = token ?? "TOKEN@woshitokencangxiaoer";
-    setToken(token);
-  }
 }

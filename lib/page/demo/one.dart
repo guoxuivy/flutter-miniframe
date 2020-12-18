@@ -11,7 +11,7 @@ class DemoOnePage extends StatelessWidget {
     return Scaffold(
       ///定义页面的标题
       appBar: AppBar(
-        title: Text("test_one", style: Theme.of(context).textTheme.subtitle2),
+        title: Text("登录", style: Theme.of(context).textTheme.subtitle2),
       ),
       body: Center(
           child: RaisedButton(

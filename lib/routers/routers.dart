@@ -1,18 +1,12 @@
-/*
- * Copyright (c) [2020] [Sean Guo]
- * [flutter-minifram] is licensed under the Mulan PSL v1.
- * You can use this software according to the terms and conditions of the Mulan PSL v1.
- * You may obtain a copy of Mulan PSL v1 at: http://license.coscl.org.cn/MulanPSL
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PSL v2 for more details.
-*/
-
+import 'package:cxe/page/home.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cxe/page/demo/home.dart';
 import 'package:cxe/routers/not_found_page.dart';
 import 'package:cxe/util/utils.dart';
+import '../page/login.dart';
+import 'package:cxe/page/user/home.dart';
+import 'package:cxe/page/index.dart';
 
 /// 定义拦截器类型
 typedef RoutersInterceptor = RouteSettings Function(RouteSettings settings);
@@ -25,12 +19,21 @@ class Routers {
   /// 路由表注册
   static Map<String, WidgetBuilder> _routerMap = {};
 
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
   /// 初始化配置
   static void initRoutes({bool isDemo = true}) {
+    isDemo = false;
     if (isDemo) {
       _routerMap = demoRouterMap;
     } else {
       // todo 正式路由表
+      _routerMap = {
+        '/index': (_) => IndexPage(),
+        '/login' : (_) =>  LoginPage(),
+        '/user/home': (_) => UserHome(),
+        '/home': (context) => HomePage(),
+      };
     }
 
     /// 注册拦截器 先进先出执行
@@ -44,6 +47,7 @@ class Routers {
     });
     _interceptorList.add((RouteSettings settings) {
       // TODO: 验证权限
+      trace('valid route: ' + settings.name);
       return settings;
     });
   }
@@ -60,12 +64,12 @@ class Routers {
 
   /// 路由派发
   static MaterialPageRoute<dynamic> generate(RouteSettings settings) {
-    /// 执行拦截器
+    // 执行拦截器
     _interceptorList.forEach((_interceptor) {
       settings = _interceptor(settings);
     });
 
-    /// 页面跳转
+    // 页面跳转
     final String name = settings.name;
     final Map<String, dynamic> arguments = settings.arguments;
     final Function pageBuilder = _routerMap[name];

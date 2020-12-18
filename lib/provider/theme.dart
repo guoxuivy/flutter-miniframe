@@ -11,6 +11,7 @@ final ChangeNotifierProvider<MyTheme> themeProvider =
 class MyTheme extends ChangeNotifier {
   /// 默认light模式
   ThemeMode _themeValue = ThemeMode.light;
+  // ThemeMode _themeValue = ThemeMode.dark;
 
   ThemeMode get mode => _themeValue;
 

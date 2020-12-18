@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cxe/boot.dart';
 import 'package:cxe/net/result.dart';
 import 'package:dio/dio.dart';
 import 'package:cxe/net/logs_interceptors.dart';
@@ -69,7 +70,7 @@ class HttpManager {
     // _dio.interceptors.add(CookieManager(CookieJar()));
 
     _dio.interceptors.add(AuthInterceptors());
-    if (isDebug) {
+    if (Boot.instance.config.debug) {
       //网络日志处理
       _dio.interceptors.add(LogsInterceptors());
     }
@@ -100,7 +101,7 @@ class HttpManager {
           data: data);
     } on DioError catch (e) {
       if(e.type != DioErrorType.CANCEL){
-        trace('统一气泡弹出提示网络或服务器异常');
+        trace('统一气泡弹出提示网络或服务器异常: ' + e.message);
       }
     }
     return parseResponse(response);
@@ -116,6 +117,7 @@ class HttpManager {
     } on DioError catch (e) {
       if (e.type != DioErrorType.CANCEL) {
         trace('统一气泡弹出提示网络或服务器异常');
+        // throw new DioError();
       }
     }
     return parseResponse(response);

@@ -1,6 +1,6 @@
+import 'package:cxe/boot.dart';
 import 'package:dio/dio.dart';
 import 'package:cxe/util/utils.dart';
-
 
 /// 网络日志处理
 class LogsInterceptors extends InterceptorsWrapper {
@@ -11,11 +11,12 @@ class LogsInterceptors extends InterceptorsWrapper {
   Future onRequest(RequestOptions options) {
     _startTime = DateTime.now();
     // trace("请求baseUrl：${options.baseUrl}");
-    // trace("请求url：${options.path}");
-    trace('请求头: ' + options.headers.toString());
-    // if (options.queryParameters.isNotEmpty) {
-    //   trace('请求参数: ' + options.queryParameters.toString());
-    // }
+    _log('请求头: ' + options.headers.toString());
+    String url = options.baseUrl + options.path;
+    if (options.queryParameters.isNotEmpty) {
+      url = url + options.queryParameters.toString();
+    }
+    _log('请求参数: ' + url);
     // if (options.data != null) {
     //   trace('发送数据: ' + options.data.toString());
     // }
@@ -26,18 +27,23 @@ class LogsInterceptors extends InterceptorsWrapper {
   Future onResponse(Response response) {
     _endTime = DateTime.now();
     final int duration = _endTime.difference(_startTime).inMilliseconds;
-    trace('----------End: $duration 毫秒----------');
-
-    if (response != null) {
+    _log('------http-End: $duration 毫秒------');
+    if (response != null && Boot.instance.config.enableApiLog) {
       var responseStr = response.toString();
-      trace(responseStr);
+      _log(responseStr);
     }
     return super.onResponse(response);
   }
 
+  void _log(dynamic log) {
+    if (Boot.instance.config.enableLog) {
+      trace(log, logLevel.info);
+    }
+  }
+
   @override
   Future onError(DioError err) {
-    String msg = 'DioError: [${err.request.path}]-' ;
+    String msg = 'DioError: [${err.request.path}]-';
     if (err.type == DioErrorType.CONNECT_TIMEOUT) {
       msg += "连接超时";
     } else if (err.type == DioErrorType.SEND_TIMEOUT) {

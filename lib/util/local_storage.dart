@@ -32,6 +32,8 @@ class LocalStorage {
   _initStorage() async {
     // 若_不存在 则创建SharedPreferences实例
     if (_storage == null) _storage = await SharedPreferences.getInstance();
+
+    //todo 将本地存储的用户数据热加加载到内存，以便快速使用
   }
 
   /// 设置存储
