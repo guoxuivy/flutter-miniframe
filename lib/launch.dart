@@ -7,6 +7,7 @@ import 'package:cxe/page/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class LaunchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,22 +23,15 @@ class LaunchPageWidget extends StatefulWidget {
 class LaunchState extends State<LaunchPageWidget> {
   final String launchImage =
       "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1093264713,2279663012&fm=26&gp=0.jpg";
-  int _countdown = 3;
+  int _countdown = 2;
   Timer _countdownTimer;
-
-  bool onReady = false;
 
   @override
   void initState() {
     super.initState();
     _startRecordTime();
     // print('初始化启动页面');
-
-    bootstrap();
   }
-
-  /// app 首页数据预加载
-  void bootstrap() async {}
 
   @override
   void dispose() {

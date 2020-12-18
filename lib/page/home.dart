@@ -1,16 +1,12 @@
 import 'dart:math';
 
-import 'package:cxe/net/result.dart';
+import 'package:cxe/boot.dart';
 import 'package:cxe/page/section/store_list_section.dart';
 import 'package:cxe/page/section/ys_future.dart';
 import 'package:cxe/res/colors.dart';
 import 'package:cxe/res/resources.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:cxe/provider/theme.dart';
 import 'package:cxe/routers/routers.dart';
-import 'package:cxe/util/utils.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -26,9 +22,6 @@ mixin _HomeStateMixin on State<HomePage> {
   int _selectedIndex = 1;
   String _searchStr;
 
-  // 页面需要的接口数据
-  Result _data = Result.nul();
-
   final List _navList = [
     {'label': '仓库', 'icon': Icons.account_balance, 'to': '/store'},
     {'label': '厂房', 'icon': Icons.location_city, 'to': '/store'},
@@ -40,11 +33,12 @@ mixin _HomeStateMixin on State<HomePage> {
     {'label': '占位子', 'textColor': Colors.white},
   ];
 
-
-
   initState() {
     super.initState();
-    // 使用异步数据会有多次build的问题 通过YsFuture使用异步数据
+    // Boot.instance.checkVersion(context);
+    // 绘制完成触发，不然context会报错
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => Boot.instance.checkVersion(context));
   }
 
   void _onItemTapped(int index) {
@@ -52,7 +46,6 @@ mixin _HomeStateMixin on State<HomePage> {
       _selectedIndex = index;
     });
   }
-
 }
 
 /// 视图构建逻辑

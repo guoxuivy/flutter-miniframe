@@ -10,16 +10,19 @@ class LogsInterceptors extends InterceptorsWrapper {
   @override
   Future onRequest(RequestOptions options) {
     _startTime = DateTime.now();
-    // trace("请求baseUrl：${options.baseUrl}");
-    _log('请求头: ' + options.headers.toString());
-    String url = options.baseUrl + options.path;
+
+    String logStr = '请求头: ' +
+        options.headers.toString() +
+        '\n' +
+        '请求接口: ${options.baseUrl}${options.path}';
+
     if (options.queryParameters.isNotEmpty) {
-      url = url + options.queryParameters.toString();
+      logStr = logStr + ' \n请求参数: ' + options.queryParameters.toString();
     }
-    _log('请求参数: ' + url);
-    // if (options.data != null) {
-    //   trace('发送数据: ' + options.data.toString());
-    // }
+    if (options.data != null) {
+      logStr = logStr + '\n发送数据: ' + options.data.toString();
+    }
+    _log(logStr);
     return super.onRequest(options);
   }
 
@@ -27,10 +30,11 @@ class LogsInterceptors extends InterceptorsWrapper {
   Future onResponse(Response response) {
     _endTime = DateTime.now();
     final int duration = _endTime.difference(_startTime).inMilliseconds;
-    _log('------http-End: $duration 毫秒------');
-    if (response != null && Boot.instance.config.enableApiLog) {
-      var responseStr = response.toString();
-      _log(responseStr);
+    _log('End: $duration 毫秒');
+
+    if (response != null) {
+      // var responseStr = response.toString();
+      // _log(responseStr);
     }
     return super.onResponse(response);
   }
