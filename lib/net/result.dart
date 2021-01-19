@@ -19,7 +19,7 @@ class Result {
 
   String get msg {
     if (_data.isNotEmpty) {
-      return _data['_msg'];
+      return _data['msg'];
     }
     return '';
   }

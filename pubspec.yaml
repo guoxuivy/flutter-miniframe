@@ -1,5 +1,5 @@
-name: cxe
-description: 仓小二用户端
+name: flutter-miniframe
+description: lutter-miniframe
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -32,6 +32,7 @@ dependencies:
   cached_network_image: ^2.0.0-rc
   flutter_riverpod: ^0.12.1
   package_info: ^0.3.2
+  fluttertoast: ^7.1.6
 
 dev_dependencies:
   flutter_test:
@@ -66,10 +67,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+     - family: Iconfont
+       fonts:
+        - asset: assets/fonts/iconfont.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

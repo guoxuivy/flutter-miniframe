@@ -1,9 +1,8 @@
-import 'package:cxe/net/result.dart';
-import 'package:cxe/res/colors.dart';
-import 'package:cxe/res/styles.dart';
-import 'package:cxe/routers/routers.dart';
-import 'package:cxe/util/utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:agent/net/result.dart';
+import 'package:agent/res/colors.dart';
+import 'package:agent/res/styles.dart';
+import 'package:agent/routers/routers.dart';
+import 'package:agent/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class Store {
@@ -15,16 +14,16 @@ class Store {
   Store(this.imgUrl, this.title, this.price, this.pTags, this.sTags);
 }
 
-class StoreListSection extends StatefulWidget {
-  StoreListSection({Key key, this.data}) : super(key: key);
+class StoreListTabSection extends StatefulWidget {
+  StoreListTabSection({Key key, this.data}) : super(key: key);
   final RData data;
 
   @override
-  StoreListSectionView createState() => StoreListSectionView();
+  StoreListTabSectionView createState() => StoreListTabSectionView();
 }
 
 /// 视图构建逻辑
-class StoreListSectionView extends State<StoreListSection> {
+class StoreListTabSectionView extends State<StoreListTabSection> {
   // 当前选中的tab
   int _tabIndex = 0;
 
@@ -40,20 +39,17 @@ class StoreListSectionView extends State<StoreListSection> {
     return i == _tabIndex;
   }
 
-
-
   @override
   void initState() {
     // TODO: implement didUpdateWidget
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    
     var viewTab = [];
-    for (var v in widget.data.range()) { // store,factory,land
+    for (var v in widget.data.range()) {
+      // store,factory,land
       List<Widget> tabView = []; //3个tab
       for (var r in v.range()) {
         var item = Store(
@@ -61,7 +57,9 @@ class StoreListSectionView extends State<StoreListSection> {
             r['title'].toString(),
             r['price'].toString() + r['unit'].toString(),
             r['library'].d.split('|'),
-            r['store_merit_text'].isNull?[]: r['store_merit_text'].d.split(','));
+            r['store_merit_text'].isNull
+                ? []
+                : r['store_merit_text'].d.split(','));
 
         tabView.add(
           InkWell(
@@ -70,7 +68,10 @@ class StoreListSectionView extends State<StoreListSection> {
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [_leftImg(item), Expanded(child: _rightColumn(item))],
+                  children: [
+                    _leftImg(item),
+                    Expanded(child: _rightColumn(item))
+                  ],
                 ),
                 Divider(
                   height: 20,
@@ -83,8 +84,6 @@ class StoreListSectionView extends State<StoreListSection> {
       }
       viewTab.add(tabView);
     }
-
-
 
     // 构造数据end
     return Container(
@@ -106,12 +105,14 @@ class StoreListSectionView extends State<StoreListSection> {
                     int i = e.key;
                     String v = e.value;
                     return Container(
-                      padding: EdgeInsets.fromLTRB(8,5,8,3),
-                      decoration: _tabShow(i)?BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 2,color: Colors.lightBlue)
-                        ),
-                      ):null,
+                      padding: EdgeInsets.fromLTRB(8, 5, 8, 3),
+                      decoration: _tabShow(i)
+                          ? BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: Colors.lightBlue)),
+                            )
+                          : null,
                       child: InkWell(
                         child: Text(v),
                         onTap: () => _onTab(i),
@@ -122,17 +123,8 @@ class StoreListSectionView extends State<StoreListSection> {
               ],
             ),
           ),
-          Column( // viewTab 渲染
-            children: ['仓库', '厂房', '土地'].asMap().entries.map((e) {
-              int i = e.key;
-              String v = e.value;
-              return Visibility(
-                visible: _tabShow(i),
-                child: Column(
-                  children: viewTab[i],
-                ),
-              );
-            }).toList(),
+          Column(
+            children: viewTab[_tabIndex],
           ),
           InkWell(
             onTap: () => Routers.go(context, '/home'),
@@ -181,7 +173,13 @@ class StoreListSectionView extends State<StoreListSection> {
       height: 90.0,
       padding: EdgeInsets.all(5),
       // child: Image.asset(data.imgUrl),
-      child: Image.network(data.imgUrl),
+      child: Image.network(
+        data.imgUrl,
+        errorBuilder: (context, error, stackTrace) {
+          trace('图片异常：' + data.imgUrl);
+          return Container();
+        },
+      ),
     );
     return img;
   }
@@ -193,7 +191,6 @@ class StoreListSectionView extends State<StoreListSection> {
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
-
 
     var tag = _tagsBox(data.pTags);
     var stag = _tagsBox(data.sTags);

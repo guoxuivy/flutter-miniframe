@@ -1,12 +1,10 @@
 //启动页面
 import 'dart:async';
-
-import 'package:cxe/boot.dart';
-import 'package:cxe/page/demo/home.dart';
-import 'package:cxe/page/home.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:agent/utils/utils.dart';
 import 'package:flutter/material.dart';
-
+import 'package:agent/boot.dart';
+import 'package:agent/pages/demo/home.dart';
+import 'package:agent/pages/home.dart';
 
 class LaunchPage extends StatelessWidget {
   @override
@@ -21,16 +19,20 @@ class LaunchPageWidget extends StatefulWidget {
 }
 
 class LaunchState extends State<LaunchPageWidget> {
-  final String launchImage =
-      "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1093264713,2279663012&fm=26&gp=0.jpg";
   int _countdown = 2;
   Timer _countdownTimer;
+  bool _upgrade = false; //更新检测是否执行完毕
 
   @override
   void initState() {
     super.initState();
     _startRecordTime();
-    // print('初始化启动页面');
+    // 绘制完成触发，不然 如果依赖context会报错
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      Boot.instance.checkVersion().then((_){
+          _upgrade = true;
+      });
+    });
   }
 
   @override
@@ -47,15 +49,17 @@ class LaunchState extends State<LaunchPageWidget> {
     _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_countdown <= 1) {
-          Navigator.of(context).pop();
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return Boot.instance.config.isDemo
-                ? DemoHomePage(title: '仓小二demo')
-                : HomePage(title: '仓小二');
-          }));
+          if(_upgrade){
+            Navigator.of(context).pop();
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return Boot.instance.config.isDemo
+                  ? DemoHomePage(title: '仓小二demo')
+                  : HomePage(title: '仓小二');
+            }));
 
-          _countdownTimer.cancel();
-          _countdownTimer = null;
+            _countdownTimer.cancel();
+            _countdownTimer = null;
+          }
         } else {
           _countdown -= 1;
         }
@@ -69,7 +73,10 @@ class LaunchState extends State<LaunchPageWidget> {
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Image.network(launchImage, fit: BoxFit.fill),
+          Image.asset(
+            "assets/images/launch.jpg",
+            fit: BoxFit.fill,
+          ),
           Positioned(
             top: 30,
             right: 30,

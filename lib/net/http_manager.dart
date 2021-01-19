@@ -1,10 +1,12 @@
 import 'dart:convert';
-import 'package:cxe/boot.dart';
-import 'package:cxe/net/result.dart';
+import 'package:agent/boot.dart';
+import 'package:agent/net/result.dart';
+import 'package:agent/utils/dialogs.dart';
 import 'package:dio/dio.dart';
-import 'package:cxe/net/logs_interceptors.dart';
-import 'package:cxe/net/auth_interceptors.dart';
-import 'package:cxe/util/utils.dart';
+import 'package:agent/net/logs_interceptors.dart';
+import 'package:agent/net/auth_interceptors.dart';
+import 'package:agent/utils/utils.dart';
+import 'package:agent/config.dart';
 
 // import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 // import 'package:cookie_jar/cookie_jar.dart';
@@ -23,7 +25,7 @@ int _connectTimeout = 5000;
 int _receiveTimeout = 3000;
 int _sendTimeout = 10000;
 String _baseUrl = 'http://www.zcdt.local';
-
+var _config = CxeConfig();
 
 /// 网络请简单求封装
 class HttpManager {
@@ -33,7 +35,6 @@ class HttpManager {
   factory HttpManager() => _singleton;
   static final HttpManager _singleton = HttpManager._();
   static Dio _dio;
-
 
   /// 初始化Dio配置
   static void initDio({
@@ -48,11 +49,11 @@ class HttpManager {
     _baseUrl = baseUrl ?? _baseUrl;
   }
 
-
   ///私有构造函数
   HttpManager._() {
     final BaseOptions _options = new BaseOptions(
-        baseUrl: _baseUrl,
+        // baseUrl: _baseUrl,
+        baseUrl: _config.apiBaseUrl,
         //连接时间为5秒
         connectTimeout: _connectTimeout,
         //响应时间为3秒
@@ -78,14 +79,19 @@ class HttpManager {
 
   /// 返回值格式化
   Result parseResponse(Response data) {
-    Map<String, dynamic> res =
-        json.decode(data.toString()) as Map<String, dynamic>;
-    if(res==null){
+    Map<String, dynamic> res = json.decode(data.toString()) as Map<String, dynamic>;
+    if (res == null) {
+      return Result.nul();
       // 防止顶层异常
-      res = Map<String, dynamic>();
+      // res = Map<String, dynamic>();
     }
-    if(res!=null && res.isNotEmpty && res['code']==401){
-      trace('401信息跳转到login');
+    if (res != null && res.isNotEmpty) {
+      if(res['code'] == 401){
+        // trace('401信息跳转到login');
+        Dialogs.unauthorized('用户未登录');
+      }else if(res['code'] == 403){
+        Dialogs.tips('接口签名错误');
+      }
     }
     return Result(res);
   }
@@ -95,13 +101,10 @@ class HttpManager {
     Response response;
     try {
       response = await _dio.post(url,
-          queryParameters: null,
-          options: options,
-          cancelToken: cancelToken,
-          data: data);
+          queryParameters: null, options: options, cancelToken: cancelToken, data: data);
     } on DioError catch (e) {
-      if(e.type != DioErrorType.CANCEL){
-        trace('统一气泡弹出提示网络或服务器异常: ' + e.message);
+      if (e.type != DioErrorType.CANCEL) {
+        Dialogs.tips('统一气泡弹出提示网络或服务器异常: ' + e.message);
       }
     }
     return parseResponse(response);
@@ -112,26 +115,21 @@ class HttpManager {
     Response response;
     try {
       // 与post 参数名称一致 方便调用
-      response = await _dio.get(url,
-          queryParameters: data, options: options, cancelToken: cancelToken);
+      response =
+          await _dio.get(url, queryParameters: data, options: options, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (e.type != DioErrorType.CANCEL) {
-        trace('统一气泡弹出提示网络或服务器异常');
-        // throw new DioError();
+        Dialogs.tips('统一气泡弹出提示网络或服务器异常: ' + e.message);
       }
     }
     return parseResponse(response);
   }
 
-
-
-
   ///下载文件
   ///todo 可扩回调函数处理下载进度条
   downLoadFile(urlPath, savePath) async {
     Response response;
-    response = await _dio.download(urlPath, savePath,
-        onReceiveProgress: (int received, int total) {
+    response = await _dio.download(urlPath, savePath, onReceiveProgress: (int received, int total) {
       // trace('$received $total');
       if (total != -1) {
         trace((received / total * 100).toStringAsFixed(0) + "%");

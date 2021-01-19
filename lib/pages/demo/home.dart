@@ -1,14 +1,14 @@
-import 'package:cxe/page/demo/one.dart';
-import 'package:cxe/page/demo/two.dart';
-import 'package:cxe/page/demo/back_result.dart';
-import 'package:cxe/util/utils.dart';
+import 'package:agent/pages/demo/one.dart';
+import 'package:agent/pages/demo/two.dart';
+import 'package:agent/pages/demo/back_result.dart';
+import 'package:agent/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:cxe/routers/routers.dart';
+import 'package:agent/routers/routers.dart';
 import 'package:dio/dio.dart';
-import 'package:cxe/net/http_manager.dart';
+import 'package:agent/net/http_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cxe/provider/theme.dart';
+import 'package:agent/provider/theme.dart';
 
 /// 路由表注册
 final Map<String, WidgetBuilder> demoRouterMap = {
@@ -47,18 +47,15 @@ class _DemoHomePageState extends State<DemoHomePage> {
     context.read(themeProvider).change();
     CancelToken token = new CancelToken();
     HttpManager.instance
-        .get('/backapi/system/env1',
-            data: {'key': 'free', 'msg': '鹅鹅鹅'}, cancelToken: token)
+        .get('/backapi/system/env1', data: {'key': 'free', 'msg': '鹅鹅鹅'}, cancelToken: token)
         .then((result) {
-
-
       setState(() {
         _counter++;
-        _myres=result['host'];
+        _myres = result['host'];
       });
       trace(result.data);
       trace("结果");
-      trace(result['1']['a'].data==null);
+      trace(result['1']['a'].data == null);
       trace(result['1']['a'].isNull);
     });
 

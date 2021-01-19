@@ -1,6 +1,6 @@
-import 'package:cxe/boot.dart';
+import 'package:agent/boot.dart';
 import 'package:dio/dio.dart';
-import 'package:cxe/util/utils.dart';
+import 'package:agent/utils/utils.dart';
 
 /// 网络日志处理
 class LogsInterceptors extends InterceptorsWrapper {
@@ -11,10 +11,8 @@ class LogsInterceptors extends InterceptorsWrapper {
   Future onRequest(RequestOptions options) {
     _startTime = DateTime.now();
 
-    String logStr = '请求头: ' +
-        options.headers.toString() +
-        '\n' +
-        '请求接口: ${options.baseUrl}${options.path}';
+    String logStr =
+        '请求头: ' + options.headers.toString() + '\n' + '请求接口: ${options.baseUrl}${options.path}';
 
     if (options.queryParameters.isNotEmpty) {
       logStr = logStr + ' \n请求参数: ' + options.queryParameters.toString();
@@ -33,7 +31,7 @@ class LogsInterceptors extends InterceptorsWrapper {
     _log('End: $duration 毫秒');
 
     if (response != null) {
-      // var responseStr = response.toString();
+      var responseStr = response.toString();
       // _log(responseStr);
     }
     return super.onResponse(response);

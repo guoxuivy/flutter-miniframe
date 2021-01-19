@@ -1,12 +1,14 @@
-import 'package:cxe/page/home.dart';
+import 'package:agent/pages/customer_list.dart';
+import 'package:agent/pages/home.dart';
+import 'package:agent/pages/store_list.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cxe/page/demo/home.dart';
-import 'package:cxe/routers/not_found_page.dart';
-import 'package:cxe/util/utils.dart';
-import '../page/login.dart';
-import 'package:cxe/page/user/home.dart';
-import 'package:cxe/page/index.dart';
+import 'package:agent/pages/demo/home.dart';
+import 'package:agent/routers/not_found_page.dart';
+import 'package:agent/utils/utils.dart';
+import 'package:agent/pages/login.dart';
+import 'package:agent/pages/user/home.dart';
+import 'package:agent/pages/index.dart';
 
 /// 定义拦截器类型
 typedef RoutersInterceptor = RouteSettings Function(RouteSettings settings);
@@ -21,6 +23,10 @@ class Routers {
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
+  /// 获取当前上下文
+  static BuildContext context() {
+    return  Routers.navigatorKey.currentContext;
+  }
   /// 初始化配置
   static void initRoutes({bool isDemo = true}) {
     isDemo = false;
@@ -30,9 +36,11 @@ class Routers {
       // todo 正式路由表
       _routerMap = {
         '/index': (_) => IndexPage(),
-        '/login' : (_) =>  LoginPage(),
+        '/login': (_) => LoginPage(),
         '/user/home': (_) => UserHome(),
         '/home': (context) => HomePage(),
+        '/store_list': (context) => StoreListPage(),
+        '/customer_list': (context) => CustomerListPage(),
       };
     }
 

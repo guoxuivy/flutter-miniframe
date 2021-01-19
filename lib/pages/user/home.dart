@@ -1,8 +1,8 @@
-import 'package:cxe/routers/routers.dart';
+import 'package:agent/routers/routers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../model/user.dart';
-import 'package:cxe/util/utils.dart';
+import 'package:agent/provider/user.dart';
+import 'package:agent/utils/utils.dart';
 
 /*
 class UserHome extends StatelessWidget {
@@ -23,30 +23,26 @@ class UserHome extends ConsumerWidget {
       children: [
         Text('你已登录，欢迎！'),
         RaisedButton(
-          child: Text('去看看'),
-          onPressed: () =>Routers.navigatorKey.currentState.pushNamed('/index')
-        )
+            child: Text('去看看'),
+            onPressed: () => Routers.navigatorKey.currentState.pushNamed('/index'))
       ],
     );
   }
+
   Widget showNoUser(BuildContext context) {
     return Column(
       children: [
         Text('您未登录'),
-        RaisedButton(
-          child: Text('立即登录'),
-          onPressed: () => Routers.go(context, '/login')
-        )
+        RaisedButton(child: Text('立即登录'), onPressed: () => Routers.go(context, '/login'))
       ],
     );
   }
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final User u = watch(userProvider).current;
 
     return Scaffold(
-      appBar: AppBar(title: Text('用户')),
-      body: u == null ? showNoUser(context) : showUser()
-    );
+        appBar: AppBar(title: Text('用户')), body: u == null ? showNoUser(context) : showUser());
   }
 }

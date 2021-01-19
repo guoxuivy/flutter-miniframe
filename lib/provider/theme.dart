@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cxe/res/resources.dart';
+import 'package:agent/res/resources.dart';
 
 ///定义 global 主题状态
 final ChangeNotifierProvider<MyTheme> themeProvider =
@@ -29,6 +29,7 @@ class MyTheme extends ChangeNotifier {
 
   ThemeData getTheme() {
     bool isDarkMode = ThemeMode.dark == _themeValue;
+
     return ThemeData(
       errorColor: isDarkMode ? Colours.dark_red : Colours.red,
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
@@ -55,8 +56,8 @@ class MyTheme extends ChangeNotifier {
         subtitle1: isDarkMode ? TextStyles.textDark : TextStyles.text,
         // Text文字样式
         bodyText2: isDarkMode ? TextStyles.textDark : TextStyles.text,
-        // subtitle2: isDarkMode ? TextStyles.textDarkGray12 : TextStyles.textGray12,
-        subtitle2: isDarkMode ? TextStyles.textWhite14 : TextStyles.textGray12,
+        subtitle2: isDarkMode ? TextStyles.textDarkGray12 : TextStyles.textGray12,
+        // subtitle2: isDarkMode ? TextStyles.textWhite14 : TextStyles.textGray12,
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle:
@@ -64,13 +65,17 @@ class MyTheme extends ChangeNotifier {
       ),
       appBarTheme: AppBarTheme(
         elevation: 0.0,
-        color: isDarkMode ? Colours.dark_bg_color : Colors.white,
-        brightness: isDarkMode ? Brightness.dark : Brightness.light,
+        color: isDarkMode ? Colours.dark_bg_color : Colors.grey[800],
+        brightness: isDarkMode ? Brightness.dark : Brightness.dark,
       ),
       dividerTheme: DividerThemeData(
           color: isDarkMode ? Colours.dark_line : Colours.line,
           space: 0.6,
           thickness: 0.6),
+      bottomAppBarTheme:BottomAppBarTheme(
+          color:Colors.white,
+      ),
+
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         //浮动按钮样式 after v1.13.2. 后不建议使用
         backgroundColor: Colors.blue,

@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:cxe/boot.dart';
+import 'package:agent/boot.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cxe/util/utils.dart';
+import 'package:agent/utils/utils.dart';
 
 /// 日志集中处理
 class Logs {

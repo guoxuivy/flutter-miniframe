@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cxe/boot.dart';
-import 'package:cxe/config.dart';
-import './launch.dart';
+import 'package:agent/boot.dart';
+import 'package:agent/config.dart';
+import 'package:agent/launch.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cxe/util/logs.dart';
-import 'package:cxe/provider/theme.dart';
-import 'package:cxe/routers/routers.dart';
+import 'package:agent/utils/logs.dart';
+import 'package:agent/provider/theme.dart';
+import 'package:agent/routers/routers.dart';
 
 void main() async {
   // 显示元素边框辅助线
   // debugPaintSizeEnabled = true;
   //提前初始化flutter 以便运行自定义的初始化
   WidgetsFlutterBinding.ensureInitialized();
-
+  //
   final boot = Boot(CxeConfig());
   await boot.onReady;
   // 沙箱异常捕获 自定义异常日志处理
@@ -45,6 +45,8 @@ void main() async {
     //安卓机上设置顶部状态栏背景为透明
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, //设置为透明
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.light,
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
@@ -61,12 +63,12 @@ class MyApp extends StatelessWidget {
         ThemeMode mode = watch(themeProvider).mode;
         return MaterialApp(
           title: '仓小二',
-          // showPerformanceOverlay: true,
+          // showPerformanceOverlay: true, //性能调试工具显示
           themeMode: mode,
           theme: context.read(themeProvider).getTheme(),
           onGenerateRoute: Routers.generate,
           navigatorKey: Routers.navigatorKey,
-          home:LaunchPage() ,
+          home: LaunchPage(),
         );
       },
     );
