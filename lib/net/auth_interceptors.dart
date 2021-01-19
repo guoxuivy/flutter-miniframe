@@ -7,7 +7,7 @@ import 'package:agent/utils/utils.dart';
 
 /// 认证拦截
 class AuthInterceptors extends InterceptorsWrapper {
-  static const String _secret = "juw342ewrgsU397U^guo*(@98df764#";
+  static const String _secret = "mymini";
 
   @override
   Future onRequest(RequestOptions options) {
