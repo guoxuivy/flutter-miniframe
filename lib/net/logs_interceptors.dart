@@ -4,11 +4,11 @@ import 'package:agent/utils/utils.dart';
 
 /// 网络日志处理
 class LogsInterceptors extends InterceptorsWrapper {
-  DateTime _startTime;
-  DateTime _endTime;
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   @override
-  Future onRequest(RequestOptions options) {
+  void onRequest(RequestOptions options,handler) {
     _startTime = DateTime.now();
 
     String logStr =
@@ -21,49 +21,47 @@ class LogsInterceptors extends InterceptorsWrapper {
       logStr = logStr + '\n发送数据: ' + options.data.toString();
     }
     _log(logStr);
-    return super.onRequest(options);
+    return handler.next(options);
   }
 
   @override
-  Future onResponse(Response response) {
+  void onResponse(Response response,handler) {
     _endTime = DateTime.now();
-    final int duration = _endTime.difference(_startTime).inMilliseconds;
+    final int duration = _endTime!.difference(_startTime!).inMilliseconds;
     _log('End: $duration 毫秒');
-
-    if (response != null) {
-      var responseStr = response.toString();
-      // _log(responseStr);
-    }
-    return super.onResponse(response);
+    handler.next(response);
   }
 
   void _log(dynamic log) {
-    if (Boot.instance.config.enableLog) {
+    if (Boot.config.enableLog) {
       trace(log, logLevel.info);
     }
   }
 
   @override
-  Future onError(DioError err) {
-    String msg = 'DioError: [${err.request.path}]-';
-    if (err.type == DioErrorType.CONNECT_TIMEOUT) {
+  void onError(DioError err,handler) {
+    String msg = 'DioError: [${err.requestOptions.path}]-';
+    err.requestOptions.queryParameters.forEach((key, value) {
+      msg += '$key=$value&';
+    });
+    if (err.type == DioErrorType.connectTimeout) {
       msg += "连接超时";
-    } else if (err.type == DioErrorType.SEND_TIMEOUT) {
+    } else if (err.type == DioErrorType.sendTimeout) {
       msg += "请求超时";
-    } else if (err.type == DioErrorType.RECEIVE_TIMEOUT) {
+    } else if (err.type == DioErrorType.receiveTimeout) {
       msg += "响应超时";
-    } else if (err.type == DioErrorType.RESPONSE) {
+    } else if (err.type == DioErrorType.response) {
       msg += "响应异常";
-    } else if (err.type == DioErrorType.CANCEL) {
+    } else if (err.type == DioErrorType.cancel) {
       msg += "请求取消";
     } else {
-      msg += "未知错误";
+      msg += "未知错误 : " + err.toString();
     }
 
     if (err.response != null) {
-      msg += ' 错误码 : ' + err.response?.statusCode.toString();
+      msg += ' 错误码 : ' + err.response!.statusCode.toString();
     }
     trace(msg, logLevel.error);
-    return super.onError(err);
+    return handler.next(err);
   }
 }

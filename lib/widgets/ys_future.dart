@@ -1,19 +1,15 @@
 import 'package:agent/net/http_manager.dart';
 import 'package:agent/net/result.dart';
-import 'package:agent/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 /// 对原生FutureBuilder组件封装 简化调用
-typedef FutureBody = Widget Function(RData result);
-
 class YsFuture extends StatefulWidget {
-  YsFuture({Key key, this.url, this.isPost = false, this.params, this.bodyFunc})
-      : super(key: key);
+  YsFuture({Key? key, required this.url, this.isPost = false, this.params, required this.bodyFunc}) : super(key: key);
   final String url;
   final bool isPost;
-  final Map<String, dynamic> params;
-  final FutureBody bodyFunc;
+  final Map<String, dynamic>? params;
+  final RDataRender bodyFunc;
 
   @override
   _YsFutureView createState() => _YsFutureView();
@@ -23,7 +19,6 @@ class YsFuture extends StatefulWidget {
 class _YsFutureView extends State<YsFuture> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return FutureBuilder(
       future: widget.isPost
           ? HttpManager().post(widget.url, data: widget.params)
@@ -39,12 +34,14 @@ class _YsFutureView extends State<YsFuture> {
           case ConnectionState.done:
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
+            } else if (snapshot.hasData) {
+              return widget.bodyFunc(snapshot.data!.data);
             }
-            if(snapshot.hasData){
-              return widget.bodyFunc(snapshot.data.data);
-            }
+            break;
+          default:
+            break;
         }
-        return null;
+        return Container();
       },
     );
   }

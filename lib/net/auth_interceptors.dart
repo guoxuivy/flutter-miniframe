@@ -1,39 +1,31 @@
-import 'dart:collection';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import 'package:agent/boot.dart';
 import 'package:agent/utils/utils.dart';
 
-
 /// 认证拦截
 class AuthInterceptors extends InterceptorsWrapper {
-  static const String _secret = "mymini";
+  static const String _secret = "juw342ewrgsU397U^guo*(@98df764#";
 
   @override
-  Future onRequest(RequestOptions options) {
+  void onRequest(RequestOptions options, handler) {
     String token = Boot.instance.user.token;
     // 如果已经登录 则带上登录key
     options.headers['key'] = token;
-    options.headers['user-agent'] = 'szx';
-
+    options.headers['user-agent'] = 'szx CxeAgent';
     // 签名放在query中
     options.queryParameters['sign'] = _buildSign(options);
-    return super.onRequest(options);
+    return handler.next(options); //continue
   }
-
 
   // 创建签名 path+post数据
-  String _buildSign(RequestOptions options){
-    String str = options.path; // '/api/index/indexData'
-    if (null!=options.data) {
-      var st = new SplayTreeMap.from(options.data); //key 升序排列
-      for (var key in st.keys) {
-        str = str + key + '=' + st[key].toString();
-      }
+  String _buildSign(RequestOptions options) {
+    String str = options.path;
+    if (null != options.data) {
+      str = str + json.encode(options.data);
     }
-    str = str + _secret;
-    // trace('front'+str);
+    str = str.replaceAll('"', "").replaceAll('\\', "") + _secret; //移除双引号 \号  消除语言歧义
     return Utils.ysMd5(str).toLowerCase();
   }
-
 }

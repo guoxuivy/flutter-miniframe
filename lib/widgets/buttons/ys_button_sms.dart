@@ -1,45 +1,37 @@
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:async';
 import 'package:agent/widgets/buttons/ys_button.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 
-class YsButtonSms extends YsButton {
+// 没做完
+class YsButtonSms extends StatefulWidget {
   final String captcha;
   final String phone;
   const YsButtonSms({
-    Key key,
-    this.captcha,
-    this.phone,
+    Key? key,
+    this.captcha='',
+    this.phone='',
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
+  YsButtonSmsState createState() {
     return YsButtonSmsState();
   }
 }
 
-class YsButtonSmsState extends YsButtonState {
+class YsButtonSmsState extends State<YsButtonSms> {
   String _title = '获取验证码';
 
   /// 倒计时的计时器。
-  Timer _timer;
-  TextStyle get textStyle {
-    return TextStyle(color: Color(0xff198AFF));
-  }
+  late Timer _timer;
 
-  String get title {
-    // print(widget.captcha);
-    return _title;
+  @override
+  void initState() {
+    super.initState();
   }
-
-  String get type {
-    return widget.type ?? 'text';
-  }
-
+  /* @override
   VoidCallback get onPressed {
     return getCode;
-  }
+  } */
 
   void _downTimeSms(t) {
     _timer = Timer.periodic(
@@ -49,7 +41,7 @@ class YsButtonSmsState extends YsButtonState {
           _title = '${t.toString()}秒后重发';
         } else {
           _title = '获取验证码';
-          _timer?.cancel();
+          _timer.cancel();
         }
         setState(() {});
         t--;
@@ -58,18 +50,15 @@ class YsButtonSmsState extends YsButtonState {
   }
 
   void getCode() {
-    print(widget);
     /* if (!widget.captcha) {
-      Fluttertoast.showToast(
+      Dialogs.showToast(
         msg: '验证码不能为空',
-        gravity: ToastGravity.CENTER,
       );
       return;
     }
     if (!widget.phone) {
-      Fluttertoast.showToast(
+      Dialogs.showToast(
         msg: '手机号码不能为空',
-        gravity: ToastGravity.CENTER,
       );
       return;
     } */
@@ -108,9 +97,6 @@ class YsButtonSmsState extends YsButtonState {
             let data = {
                 phone: this.params.phone,
             }
-            if (this.useCaptcha) {
-                data.captcha = this.params.captcha
-            }
             ajax({
                 url: this.url,
                 data,
@@ -122,4 +108,22 @@ class YsButtonSmsState extends YsButtonState {
                 }
             })
         } */
+  @override
+  Widget build(BuildContext context) {
+    return YsButton(
+      color: Colors.transparent,
+      text: true,
+      title: _title,
+      size: 'small',
+      type: 'primary',
+      onPressed: getCode,
+    );
+  }
+
+  @override
+  void dispose() {
+    // 释放
+    _timer.cancel();
+    super.dispose();
+  }
 }

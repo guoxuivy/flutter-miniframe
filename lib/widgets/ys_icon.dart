@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class YsIcon extends StatelessWidget {
   const YsIcon({
-    Key key,
+    Key? key,
     this.color = '73777A',
     this.src,
     this.type = 'primary',
@@ -12,26 +12,27 @@ class YsIcon extends StatelessWidget {
   final String type;
   final src;
   final double size;
-  final String color;
+  final color;
 
   @override
   Widget build(BuildContext context) {
+    final _color = color is Color
+        ? color
+        : Color(
+            int.parse('0xff' + color),
+          );
     if (src is IconData) {
       return Icon(
         src,
         size: size,
-        color: Color(
-          int.parse('0xff' + color),
-        ),
+        color: _color,
       );
     }
     final _code = int.parse(src.replaceAll('&#', '0').replaceAll(';', ''));
     return Icon(
       IconData(_code, fontFamily: 'Iconfont'),
       size: size,
-      color: Color(
-        int.parse('0xff' + color),
-      ),
+      color: _color,
     );
   }
 }

@@ -12,27 +12,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ls.setStorage('Map',{"key":"value"});        // 存储Map
 /// 本地存储工具
 class LocalStorage {
-  static LocalStorage get instance => LocalStorage();
+  static LocalStorage? _instance;
+  static LocalStorage get instance {
+    if (_instance == null) {
+      _instance = LocalStorage._internal();
+    }
+    return _instance!;
+  }
 
-  /// 静态私有实例对象
-  static final _singleton = LocalStorage._init();
-
-  /// 工厂构造函数 返回实例对象
-  factory LocalStorage() => _singleton;
-
-  /// SharedPreferences对象
-  static SharedPreferences _storage;
-
-  /// 命名构造函数 用于初始化SharedPreferences实例对象
-  LocalStorage._init() {
+  LocalStorage._internal() {
     _initStorage();
   }
+
+  /// SharedPreferences对象
+  static SharedPreferences? _storage;
 
   // 之所以这个没有写在 _init中，是因为SharedPreferences.getInstance是一个异步的方法 需要用await接收它的值
   _initStorage() async {
     // 若_不存在 则创建SharedPreferences实例
-    if (_storage == null) _storage = await SharedPreferences.getInstance();
-
+    _storage ??= await SharedPreferences.getInstance();
     //todo 将本地存储的用户数据热加加载到内存，以便快速使用
   }
 
@@ -52,16 +50,16 @@ class LocalStorage {
     // 根据value不同的类型 用不同的方法进行存储
     switch (type) {
       case 'String':
-        _storage.setString(key, value);
+        _storage!.setString(key, value);
         break;
       case 'int':
-        _storage.setInt(key, value);
+        _storage!.setInt(key, value);
         break;
       case 'double':
-        _storage.setDouble(key, value);
+        _storage!.setDouble(key, value);
         break;
       case 'bool':
-        _storage.setBool(key, value);
+        _storage!.setBool(key, value);
         break;
     }
   }
@@ -70,7 +68,7 @@ class LocalStorage {
   Future<dynamic> getStorage(String key) async {
     await _initStorage();
     // 获取key对应的value
-    dynamic value = _storage.get(key);
+    dynamic value = _storage!.get(key);
     // 判断value是不是一个json的字符串 是 则解码
     if (_isJson(value)) {
       return JsonDecoder().convert(value);
@@ -83,14 +81,14 @@ class LocalStorage {
   /// 是否包含某个key
   Future<bool> hasKey(String key) async {
     await _initStorage();
-    return _storage.containsKey(key);
+    return _storage!.containsKey(key);
   }
 
   /// 删除key指向的存储 如果key存在则删除并返回true，否则返回false
   Future<bool> removeStorage(String key) async {
     await _initStorage();
     if (await hasKey(key)) {
-      await _storage.remove(key);
+      await _storage!.remove(key);
       return true;
     } else {
       return false;
@@ -100,14 +98,14 @@ class LocalStorage {
   /// 清空存储 并总是返回true
   Future<bool> clear() async {
     await _initStorage();
-    _storage.clear();
+    _storage!.clear();
     return true;
   }
 
   /// 获取所有的key 类型为Set<String>
   Future<Set<String>> getKeys() async {
     await _initStorage();
-    return _storage.getKeys();
+    return _storage!.getKeys();
   }
 
   // 判断是否是JSON字符串

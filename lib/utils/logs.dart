@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:agent/boot.dart';
+import 'package:agent/utils/dialogs.dart';
+import 'package:agent/utils/local_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:agent/utils/utils.dart';
 
@@ -10,7 +12,7 @@ class Logs {
   static String _endLine = "=========================";
 
   static void trace(dynamic value, [level = logLevel.info]) {
-    if (Boot.instance.config.debug) {
+    if (Boot.config.debug) {
       _log(value.toString());
     } else {
       // 可以写日志文件 or 远程上报服务器
@@ -22,6 +24,7 @@ class Logs {
         case logLevel.error:
           break;
         case logLevel.exception:
+          LocalStorage.instance.setStorage("exceptionLog", value.toString());
           break;
       }
     }
@@ -29,7 +32,7 @@ class Logs {
 
   /// 拦截 系统的一些异常信息 不要调用trace
   static void collectPrint(ZoneDelegate parent, Zone zone, String line) {
-    if (Boot.instance.config.debug) {
+    if (Boot.config.debug) {
       parent.print(zone, line);
     } else {
       // 文件or网络日子处理
@@ -40,8 +43,7 @@ class Logs {
   static void reportErrorAndLog(FlutterErrorDetails details) {
     //上报错误和日志逻辑
     // 未捕获的错误异常日志处理 可自定义异常友好显示界面 防止crash
-    // print('exception:');
-    // print(details.exception.message);
+    // print('exception:'+ details.toString());
     // print(details.stack);
     trace(details, logLevel.exception);
   }
